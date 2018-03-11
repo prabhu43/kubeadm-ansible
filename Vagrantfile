@@ -51,7 +51,7 @@ Vagrant.configure("2") do |config|
         vb.cpus = $vm_cpus
       end
 
-      ip = "#{$subnet}.#{i+200}"
+      ip = "#{$subnet}.#{i+100}"
 
       config.vm.network :private_network, ip: ip
     end

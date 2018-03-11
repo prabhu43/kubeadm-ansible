@@ -1,0 +1,16 @@
+# ## Configure 'ip' variable to bind kubernetes services on a
+# ## different ip than the default iface
+kube-01 ansible_host=kube-01 ansible_user=root ip=172.17.8.101 
+kube-02 ansible_host=kube-02 ansible_user=root ip=172.17.8.102 
+kube-03 ansible_host=kube-03 ansible_user=root ip=172.17.8.103 
+
+[kube-master]
+kube-01
+
+[kube-node]
+kube-02
+kube-03
+
+[kube-cluster:children]
+kube-node
+kube-master

@@ -1,0 +1,19 @@
+---
+
+- name: Create canal manifests
+  template:
+    src: "{{item.file}}.j2"
+    dest: "{{kube_config_dir}}/{{item.file}}"
+  with_items:
+    - {name: canal-rbac, file: rbac.yaml}
+    - {name: canal-config, file: canal.yaml}
+    
+
+- name: Install canal
+  command: "kubectl apply -f {{ kube_config_dir }}/{{ item.file }}"
+  environment:
+    KUBECONFIG: "/etc/kubernetes/admin.conf"
+  with_items:
+    - {name: canal-rbac, file: rbac.yaml}
+    - {name: canal-config, file: canal.yaml}
+  

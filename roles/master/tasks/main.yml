@@ -1,0 +1,13 @@
+---
+
+- name: Initialize master using kubeadm
+  command: "kubeadm init --pod-network-cidr=10.244.0.0/16"
+
+- name: Install network
+  include_role: 
+    name: master/canal 
+
+- name: Isolate master node
+  command: "kubectl taint nodes --all node-role.kubernetes.io/master-"
+  environment:
+    KUBECONFIG: "/etc/kubernetes/admin.conf"

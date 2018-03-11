@@ -1,0 +1,7 @@
+---
+
+# kubectl drain <nodename> --delete-local-data --force --ignore-daemonsets
+# kubectl delete node <nodename>
+
+- name: Reset kubeadm
+  command: "kubeadm reset"

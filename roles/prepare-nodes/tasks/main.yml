@@ -1,0 +1,94 @@
+---
+
+- name: Disable swap
+  command: "{{ item }}"
+  with_items: 
+    - "swapoff -a"
+    - "sed -i '/ swap /s/^/#/' /etc/fstab"
+
+- name: Set selinux policy as permissive
+  selinux:
+    policy: targeted
+    state: permissive
+
+- name: Disable Firewall
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+
+- name: Check if bridge-nf-call-iptables key exists
+  command: "sysctl net.bridge.bridge-nf-call-iptables"
+  failed_when: false
+  register: sysctl_bridge_nf_call_iptables
+    
+- name: Enable bridge-nf-call tables
+  sysctl:
+    name: "{{ item }}"
+    state: present
+    value: 1
+    reload: yes
+  when: sysctl_bridge_nf_call_iptables.rc == 0
+  with_items:
+    - net.bridge.bridge-nf-call-iptables
+    - net.bridge.bridge-nf-call-arptables
+    - net.bridge.bridge-nf-call-ip6tables
+
+- name: Update all yum packages
+  yum:
+    name: '*'
+    state: latest
+
+- name: Install some network packages
+  yum: 
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - lsof
+    - net-tools
+
+# command: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+- name: Add docker repo 
+  command: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+  # yum_repository: 
+  #   name: docker-ce
+  #   description: docker-ce
+  #   baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+
+- name: Install and Start Docker
+  yum:
+    name: docker-ce
+    state: present
+
+- name: Ensure docker service is started and enabled
+  service:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Add kubernetes repo
+  copy: 
+    src: "{{ role_path }}/files/kubernetes.repo"
+    dest: /etc/yum.repos.d/kubernetes.repo
+
+- name: Install kubeadm, kubectl, kubelet
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - kubeadm
+    - kubectl
+    - kubelet
+
+- name: Configure the cgroup driver of kubelet
+  replace:
+    path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    regexp: 'cgroup-driver=systemd'
+    replace: 'cgroup-driver=cgroupfs'
+
+- name: Restart kubelet
+  systemd:
+    name: kubelet
+    state: restarted
+    daemon_reload: yes
+    

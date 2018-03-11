@@ -1,0 +1,6 @@
+---
+
+- name: Reset kubeadm
+  hosts: kube-cluster
+  roles: 
+    - { role: reset }

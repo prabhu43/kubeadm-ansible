@@ -1,0 +1,2 @@
+kube_config_dir: /etc/kubernetes
+network_interface: eth1
