@@ -1,0 +1,13 @@
+---
+
+- name: Download dashboard manifest
+  get_url:
+    url: https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+    dest: "{{ kube_config_dir }}/kubernetes-dashboard.yaml"
+  when: inventory_hostname == groups['kube-master'][0]
+
+- name: Install dashboard
+  command: "kubectl apply -f {{ kube_config_dir }}/kubernetes-dashboard.yaml"
+  when: inventory_hostname == groups['kube-master'][0]
+
+

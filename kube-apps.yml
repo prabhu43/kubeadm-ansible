@@ -1,0 +1,6 @@
+- name: Install apps - dashboard
+  hosts: kube-master
+  environment:
+    KUBECONFIG: "/etc/kubernetes/admin.conf"
+  roles: 
+    - { role: kube-apps }
