@@ -1,5 +1,24 @@
 ---
 
+- name: Check if master setup exists
+  hosts: kube-master
+  tasks:
+    - stat:
+        path: /etc/kubernetes/admin.conf
+      register: master_config
+
+- name: Drain and delete all nodes in cluster
+  hosts: kube-master
+  environment:
+    KUBECONFIG: "/etc/kubernetes/admin.conf"
+  tasks:
+    - command: "kubectl drain {{ item }} --delete-local-data --force --ignore-daemonsets"
+      with_items: "{{ groups['kube-cluster'] }}"
+      when: master_config.stat.exists
+    - command: "kubectl delete node {{ item }}"
+      with_items: "{{ groups['kube-cluster'] }}"
+      when: master_config.stat.exists
+    
 - name: Reset kubeadm
   hosts: kube-cluster
   roles: 

@@ -3,5 +3,14 @@
 # kubectl drain <nodename> --delete-local-data --force --ignore-daemonsets
 # kubectl delete node <nodename>
 
-- name: Reset kubeadm
+
+
+- name: Reset | reset kubeadm
   command: "kubeadm reset"
+
+- name: Reset | delete some files and directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{kube_config_dir}}"
