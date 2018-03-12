@@ -58,16 +58,7 @@
   tags: 
     - helm
 
-# - name: Download Ingress manifest
-#   get_url:
-#     url: https://raw.githubusercontent.com/kubernetes/kops/master/addons/ingress-nginx/v1.4.0.yaml
-#     dest: "{{ kube_config_dir }}/ingress-controller.yaml"
-#   when: inventory_hostname == groups['kube-master'][0]
-#   tags: 
-#     - ingress
-
-# - name: Install Ingress controller
-#   command: "kubectl apply -f {{ kube_config_dir }}/ingress-controller.yaml"
-#   when: inventory_hostname == groups['kube-master'][0]
-#   tags:
-#     - ingress
+- name: Install Ingress using helm
+  command: helm install stable/nginx-ingress --name my-nginx --set rbac.create=true
+  tags: 
+    - ingress
