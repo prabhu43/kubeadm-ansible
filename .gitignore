@@ -2,3 +2,5 @@
 cluster.retry
 reset.retry
 inventory/my_hosts
+kube-apps.retry
+admin.conf

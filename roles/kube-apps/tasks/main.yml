@@ -4,10 +4,72 @@
   get_url:
     url: https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
     dest: "{{ kube_config_dir }}/kubernetes-dashboard.yaml"
-  when: inventory_hostname == groups['kube-master'][0]
+  tags: 
+    - dashboard
 
 - name: Install dashboard
   command: "kubectl apply -f {{ kube_config_dir }}/kubernetes-dashboard.yaml"
-  when: inventory_hostname == groups['kube-master'][0]
+  tags: 
+    - dashboard
+
+- name: Add Path variable for /usr/local/bin
+  shell: "{{ item }}"
+  with_items:
+    - "echo 'pathmunge /usr/local/bin' > /etc/profile.d/localbin.sh"
+    - "chmod +x /etc/profile.d/localbin.sh"
+    - ". /etc/profile"
+  tags: 
+    - helm
+
+- name: Check that the helm exists
+  stat:
+    path: /usr/local/bin/helm
+  register: helm_result
+  tags: 
+    - helm
+
+- name: Install helm
+  shell: "curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash"
+  when: helm_result.stat.exists == False
+  tags: 
+    - helm
+
+- name: Helm | Lay Down Helm Manifests (RBAC)
+  template:
+    src: "{{item.file}}"
+    dest: "{{kube_config_dir}}/{{item.file}}"
+  with_items:
+    - {name: tiller, file: tiller-sa.yml, type: sa}
+    - {name: tiller, file: tiller-clusterrolebinding.yml, type: clusterrolebinding}
+  register: manifests
+  tags: 
+    - helm
+
+- name: Helm | Apply Helm Manifests (RBAC)
+  command: "kubectl apply -f {{kube_config_dir}}/{{item}}"
+  with_items:
+    - "tiller-sa.yml"
+    - "tiller-clusterrolebinding.yml"
+  tags: 
+    - helm
 
 
+- name: Install tiller
+  command: "helm init --service-account=tiller"
+  tags: 
+    - helm
+
+
+# - name: Download Ingress manifest
+#   get_url:
+#     url: https://raw.githubusercontent.com/kubernetes/kops/master/addons/ingress-nginx/v1.4.0.yaml
+#     dest: "{{ kube_config_dir }}/ingress-controller.yaml"
+#   when: inventory_hostname == groups['kube-master'][0]
+#   tags: 
+#     - ingress
+
+# - name: Install Ingress controller
+#   command: "kubectl apply -f {{ kube_config_dir }}/ingress-controller.yaml"
+#   when: inventory_hostname == groups['kube-master'][0]
+#   tags:
+#     - ingress
