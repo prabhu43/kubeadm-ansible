@@ -11,11 +11,17 @@
     policy: targeted
     state: permissive
 
+- name: Check if firewalld exists
+  shell: "systemctl status firewalld"    
+  register: firewalld
+  ignore_errors: true
+
 - name: Disable Firewall
   systemd:
     name: firewalld
     state: stopped
     enabled: no
+  when: firewalld.rc == 0
 
 - name: Check if bridge-nf-call-iptables key exists
   command: "sysctl net.bridge.bridge-nf-call-iptables"
@@ -80,22 +86,16 @@
     - kubectl
     - kubelet
 
-- name: Ensure kubelet service is started and enabled
-  service:
-    name: kubelet
-    enabled: yes
-    state: started
-
 - name: Configure the cgroup driver of kubelet
   replace:
     path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
     regexp: 'cgroup-driver=systemd'
     replace: 'cgroup-driver=cgroupfs'
 
+- name: Reload systemd
+  command: systemctl daemon-reload
 
-- name: Restart kubelet
-  systemd:
+- name: Reload kubelet
+  service:
     name: kubelet
     state: restarted
-    daemon_reload: yes
-    
