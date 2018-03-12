@@ -1,3 +1,4 @@
 .vagrant/
 cluster.retry
 reset.retry
+inventory/my_hosts

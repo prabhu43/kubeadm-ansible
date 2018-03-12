@@ -80,11 +80,18 @@
     - kubectl
     - kubelet
 
+- name: Ensure kubelet service is started and enabled
+  service:
+    name: kubelet
+    enabled: yes
+    state: started
+
 - name: Configure the cgroup driver of kubelet
   replace:
     path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
     regexp: 'cgroup-driver=systemd'
     replace: 'cgroup-driver=cgroupfs'
+
 
 - name: Restart kubelet
   systemd:
