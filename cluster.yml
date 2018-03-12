@@ -7,6 +7,8 @@
 
 - name: Master setup
   hosts: kube-master
+  environment:
+    KUBECONFIG: "/etc/kubernetes/admin.conf"
   roles: 
     - { role: master }
 
@@ -15,4 +17,10 @@
   roles: 
     - { role: worker }
 
+# - name: check
+#   hosts: kube-master
+#   tasks:
+#     - debug:
+#         # var: hostvars[inventory_hostname]
+#         msg: "ip: {{hostvars[inventory_hostname]['ip']}}"
 

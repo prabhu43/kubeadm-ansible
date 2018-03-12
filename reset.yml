@@ -15,9 +15,11 @@
     - command: "kubectl drain {{ item }} --delete-local-data --force --ignore-daemonsets"
       with_items: "{{ groups['kube-cluster'] }}"
       when: master_config.stat.exists
+      ignore_errors: true
     - command: "kubectl delete node {{ item }}"
       with_items: "{{ groups['kube-cluster'] }}"
       when: master_config.stat.exists
+      ignore_errors: true
     
 - name: Reset kubeadm
   hosts: kube-cluster
