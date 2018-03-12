@@ -7,6 +7,23 @@
         path: /etc/kubernetes/admin.conf
       register: master_config
 
+- name: Check if helm exists
+  hosts: kube-master
+  tasks:
+    - stat:
+        path: /usr/local/bin/helm
+      register: helm_result
+
+- name: Reset Tiller & Helm
+  hosts: kube-master
+  tasks:
+    - command: helm reset
+      when: helm_result.stat.exists
+    - file:
+        path: /usr/local/bin/helm
+        state: absent
+      when: helm_result.stat.exists
+
 - name: Drain and delete all nodes in cluster
   hosts: kube-master
   environment:

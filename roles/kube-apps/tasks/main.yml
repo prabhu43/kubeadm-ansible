@@ -53,12 +53,10 @@
   tags: 
     - helm
 
-
 - name: Install tiller
   command: "helm init --service-account=tiller"
   tags: 
     - helm
-
 
 # - name: Download Ingress manifest
 #   get_url:
