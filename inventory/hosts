@@ -1,16 +1,21 @@
 # ## Configure 'ip' variable to bind kubernetes services on a
 # ## different ip than the default iface
-kube-01 ansible_host=kube-01 ansible_user=root ip=172.17.8.101
-kube-02 ansible_host=kube-02 ansible_user=root ip=172.17.8.102
-kube-03 ansible_host=kube-03 ansible_user=root ip=172.17.8.103
+k8s-master ansible_host=k8s-master
+k8s-worker-1 ansible_host=k8s-worker-1
+k8s-worker-2 ansible_host=k8s-worker-2
 
 [kube-master]
-kube-01
+k8s-master
 
 [kube-node]
-kube-02
-kube-03
+k8s-worker-1
+k8s-worker-2
 
 [kube-cluster:children]
 kube-node
 kube-master
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_ssh_user=vagrant
+ansible_ssh_private_key_file=/Users/prabhujayakumar/.vagrant.d/insecure_private_key
