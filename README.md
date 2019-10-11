@@ -4,16 +4,26 @@ Ansible playbooks with roles to setup multi-node kubernetes cluster using kubead
 
 ## Prerequistes
 
-* 1 master machine - centos 7
+* Vagrant >= 2.2.5
 
-* 1+ worker machines - centos 7
+* Ansible (>=2.8.0)
 
-* Ansible (>=2.4) is required in the client machine from where cluster setup will run
+## Commands
 
-If your trying to setup cluster in your local machine, use the Vagrantfile provided to create 3 centos7 virtual machine. Please change the cpu and memory requirements as per your need.
+Install vagrant plugin vagrant-hostsupdater to update `/etc/hosts` on vagrant up
+`vagrant plugin install vagrant-hostsupdater`
 
-## Configuration
+Spin up virtual machines
+`vagrant up`
 
-1. Change the inventory hosts configuration.
+Create non-root user with sudo privileges in all VMs
+`ansible-playbook -i inventory/hosts user.yml`
 
-2. Change the group variables (inventory/all.yml). Change the 'network_interface' to the correct one. Note: If the virtual machine is created using vagrant/virtualbox, network_interface will be 'eth1'.
+Install kube dependencies on all VMs
+`ansible-playbook -i inventory/hosts kube-dependencies.yml`
+
+Initialise master
+`ansible-playbook -i inventory/hosts master.yml`
+
+Join worker nodes to cluster
+`ansible-playbook -i inventory/hosts workers.yml`
