@@ -1,2 +1,5 @@
 kube_config_dir: /etc/kubernetes
 network_interface: eth1
+kube_bench_pkg_url: https://github.com/aquasecurity/kube-bench/releases/download/v0.0.34/kube-bench_0.0.34_linux_amd64.deb
+kube_bench_source_url: https://github.com/aquasecurity/kube-bench/archive/v0.0.34.zip
+kube_bench_src_dir: kube-bench-0.0.34
