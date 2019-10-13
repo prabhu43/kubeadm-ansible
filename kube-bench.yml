@@ -1,0 +1,62 @@
+- hosts: all
+  become: yes
+  tasks:
+    - debug:
+        msg: "/home/{{ ansible_env.USER }}"
+
+    - name: Create Downloads directory
+      file:
+        path: "/home/{{ ansible_env.USER }}/Downloads"
+        state: directory
+
+    - name: Check if kube-bench is installed
+      command: dpkg-query -W kube-bench
+      register: kube_bench_check_deb
+      failed_when: kube_bench_check_deb.rc > 1
+      changed_when: kube_bench_check_deb.rc == 1
+
+    - name: Download kube-bench
+      get_url: 
+        url: "{{ kube_bench_pkg_url }}"
+        dest: "/home/{{ ansible_env.USER }}/Downloads/kube-bench.deb"
+        force: yes
+      when: kube_bench_check_deb.rc == 1
+
+    - name: Install kube_bench
+      apt: deb="/home/{{ ansible_env.USER }}/Downloads/kube-bench.deb"
+      when: kube_bench_check_deb.rc == 1
+
+    - name: Delete kube-bench.deb
+      file:
+        path: /home/{{ ansible_env.USER }}/Downloads/kube-bench.deb
+        state: absent
+
+    - name: Install unzip
+      apt:
+       name: unzip
+       state: present
+
+    - name: Extract kube-bench source code
+      unarchive:
+        src: "{{ kube_bench_source_url }}"
+        dest: "/home/{{ ansible_env.USER }}/Downloads"
+        remote_src: yes
+
+    - name: Copy kube-bench config
+      copy: 
+        src: "/home/{{ ansible_env.USER }}/Downloads/{{ kube_bench_src_dir }}/cfg"
+        dest: "/home/{{ ansible_env.USER }}/cfg"
+        remote_src: yes
+
+
+# wget https://github.com/aquasecurity/kube-bench/releases/download/v0.0.34/kube-bench_0.0.34_linux_amd64.deb
+
+# sudo dpkg -i kube-bench_0.0.34_linux_amd64.deb
+
+# rm kube-bench_0.0.34_linux_amd64.deb
+
+# sudo apt-get install unzip
+
+# wget -O tmp.zip https://github.com/aquasecurity/kube-bench/archive/v0.0.34.zip && unzip tmp.zip && rm tmp.zip
+
+# cp -r kube-bench-0.0.34/cfg ~/cfg

@@ -27,3 +27,6 @@ Initialise master
 
 Join worker nodes to cluster
 `ansible-playbook -i inventory/hosts workers.yml`
+
+Install kube-bench in all nodes
+`ansible-playbook -i inventory/hosts kube-bench.yml`
