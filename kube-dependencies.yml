@@ -7,35 +7,16 @@
        - "swapoff -a"
        - "sed -i '/ swap /s/^/#/' /etc/fstab"
 
-<<<<<<< HEAD
-  # - name: Set selinux policy as permissive
-  #   selinux:
-  #     policy: targeted
-  #     state: permissive
-
-  - name: Check if bridge-nf-call-iptables key exists
-    command: "sysctl net.bridge.bridge-nf-call-iptables"
-    failed_when: false
-    register: sysctl_bridge_nf_call_iptables
-=======
    - name: install policycoreutils
      apt:
        name: policycoreutils
        update_cache: yes
->>>>>>> Correct line indentation and update apt get to install selinux
 
    - name: Check if bridge-nf-call-iptables key exists
      command: "sysctl net.bridge.bridge-nf-call-iptables"
      failed_when: false
      register: sysctl_bridge_nf_call_iptables
 
-<<<<<<< HEAD
-  - name: install Docker
-    apt:
-      name: docker.io
-      state: present
-      update_cache: true
-=======
    - name: Enable bridge-nf-call tables
      sysctl:
        name: "{{ item }}"
@@ -53,34 +34,33 @@
        name: docker.io
        state: present
        update_cache: true
->>>>>>> Correct line indentation and update apt get to install selinux
 
-  - name: install APT Transport HTTPS
-    apt:
-      name: apt-transport-https
-      state: present
-
-  - name: add Kubernetes apt-key
-    apt_key:
-      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-      state: present
-
-  - name: add Kubernetes' APT repository
-    apt_repository:
-      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
-      state: present
-      filename: 'kubernetes'
-
-  - name: install kubelet
-    apt:
-      name: kubelet=1.14.0-00
-      state: present
-      update_cache: true
-
-  - name: install kubeadm
-    apt:
-      name: kubeadm=1.14.0-00
-      state: present
+   - name: install APT Transport HTTPS
+     apt:
+       name: apt-transport-https
+       state: present
+  
+   - name: add Kubernetes apt-key
+     apt_key:
+       url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+       state: present
+  
+   - name: add Kubernetes' APT repository
+     apt_repository:
+       repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+       state: present
+       filename: 'kubernetes'
+  
+   - name: install kubelet
+     apt:
+       name: kubelet=1.14.0-00
+       state: present
+       update_cache: true
+  
+   - name: install kubeadm
+     apt:
+       name: kubeadm=1.14.0-00
+       state: present
 
 - hosts: kube-master
   become: yes
