@@ -1,12 +1,13 @@
 - hosts: all
   become: yes
   tasks:
-  - name: Disable swap
-    command: "{{ item }}"
-    with_items:
-      - "swapoff -a"
-      - "sed -i '/ swap /s/^/#/' /etc/fstab"
+   - name: Disable swap
+     command: "{{ item }}"
+     with_items:
+       - "swapoff -a"
+       - "sed -i '/ swap /s/^/#/' /etc/fstab"
 
+<<<<<<< HEAD
   # - name: Set selinux policy as permissive
   #   selinux:
   #     policy: targeted
@@ -16,24 +17,43 @@
     command: "sysctl net.bridge.bridge-nf-call-iptables"
     failed_when: false
     register: sysctl_bridge_nf_call_iptables
+=======
+   - name: install policycoreutils
+     apt:
+       name: policycoreutils
+       update_cache: yes
+>>>>>>> Correct line indentation and update apt get to install selinux
 
-  - name: Enable bridge-nf-call tables
-    sysctl:
-      name: "{{ item }}"
-      state: present
-      value: 1
-      reload: yes
-    when: sysctl_bridge_nf_call_iptables.rc == 0
-    with_items:
-      - net.bridge.bridge-nf-call-iptables
-      - net.bridge.bridge-nf-call-arptables
-      - net.bridge.bridge-nf-call-ip6tables
+   - name: Check if bridge-nf-call-iptables key exists
+     command: "sysctl net.bridge.bridge-nf-call-iptables"
+     failed_when: false
+     register: sysctl_bridge_nf_call_iptables
 
+<<<<<<< HEAD
   - name: install Docker
     apt:
       name: docker.io
       state: present
       update_cache: true
+=======
+   - name: Enable bridge-nf-call tables
+     sysctl:
+       name: "{{ item }}"
+       state: present
+       value: 1
+       reload: yes
+     when: sysctl_bridge_nf_call_iptables.rc == 0
+     with_items:
+       - net.bridge.bridge-nf-call-iptables
+       - net.bridge.bridge-nf-call-arptables
+       - net.bridge.bridge-nf-call-ip6tables
+  
+   - name: install Docker
+     apt:
+       name: docker.io
+       state: present
+       update_cache: true
+>>>>>>> Correct line indentation and update apt get to install selinux
 
   - name: install APT Transport HTTPS
     apt:
