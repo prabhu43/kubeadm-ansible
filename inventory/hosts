@@ -2,14 +2,20 @@
 # ## different ip than the default iface
 k8s-master ansible_host=k8s-master ip=192.168.205.10
 k8s-worker-1 ansible_host=k8s-worker-1 ip=192.168.205.11
-k8s-worker-2 ansible_host=k8s-worker-2 ip=192.168.205.12
+
+
+## Secure Cluster
+k8s-master-secure ansible_host=k8s-master ip=192.168.205.13
+k8s-worker-1-secure ansible_host=k8s-worker-1 ip=192.168.205.14
 
 [kube-master]
 k8s-master
+k8s-master-secure
 
 [kube-node]
 k8s-worker-1
 k8s-worker-2
+k8s-worker-1-secure
 
 [kube-cluster:children]
 kube-node

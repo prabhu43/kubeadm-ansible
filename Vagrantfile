@@ -23,11 +23,20 @@ servers = [
         :cpu => "2"
     },
     {
-        :name => "k8s-worker-2",
+        :name => "k8s-master-secure",
+        :type => "master",
+        :box => "ubuntu/xenial64",
+        :box_version => "20180831.0.0",
+        :eth1 => "192.168.205.13",
+        :memory => "2048",
+        :cpu => "2"
+    },
+    {
+        :name => "k8s-worker-1-secure",
         :type => "node",
         :box => "ubuntu/xenial64",
         :box_version => "20180831.0.0",
-        :eth1 => "192.168.205.12",
+        :eth1 => "192.168.205.14",
         :memory => "2048",
         :cpu => "2"
     }

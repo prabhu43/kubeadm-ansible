@@ -2,10 +2,10 @@
   become: yes
   tasks:
     - name: initialize the cluster
-      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address={{ hostvars[inventory_hostname]['ip'] }} >> cluster_initialized.txt
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address={{ hostvars[inventory_hostname]['ip'] }} >> cluster_initialized_1.txt
       args:
         chdir: $HOME
-        creates: cluster_initialized.txt
+        creates: cluster_initialized_1.txt
 
     - name: create .kube directory
       become: yes
