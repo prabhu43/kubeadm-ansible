@@ -7,10 +7,10 @@
        - "swapoff -a"
        - "sed -i '/ swap /s/^/#/' /etc/fstab"
 
-   - name: install policycoreutils
-     apt:
-       name: policycoreutils
-       update_cache: yes
+  #  - name: install policycoreutils
+  #    apt:
+  #      name: policycoreutils
+  #      update_cache: yes
 
    - name: Check if bridge-nf-call-iptables key exists
      command: "sysctl net.bridge.bridge-nf-call-iptables"

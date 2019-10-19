@@ -1,11 +1,23 @@
 - hosts: kube-master
   become: yes
   tasks:
+    # - name: copy api-server config file
+    #   copy:
+    #     src: /Users/JagdshLK/Documents/Projects/kubernetes_security_workshop/kubeadm-ansible/config/api-server-config.yaml
+    #     dest: /etc/kubernetes/
+    #     owner: ubuntu
+
+    # - name: copy encrption yaml 
+    #   copy:
+    #     src: /Users/JagdshLK/Documents/Projects/kubernetes_security_workshop/kubeadm-ansible/config/encryption_key.yaml
+    #     dest: /etc/kubernetes/
+    #     owner: ubuntu
+
     - name: initialize the cluster
-      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address={{ hostvars[inventory_hostname]['ip'] }} >> cluster_initialized_1.txt
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address={{ hostvars[inventory_hostname]['ip'] }} >> cluster_initialized.txt
       args:
         chdir: $HOME
-        creates: cluster_initialized_1.txt
+        creates: cluster_initialized.txt
 
     - name: create .kube directory
       become: yes
