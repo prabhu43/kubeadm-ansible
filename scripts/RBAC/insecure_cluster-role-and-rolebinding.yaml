@@ -1,0 +1,24 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  namespace: default
+  name: cluster-deployment-manager
+rules:
+- apiGroups: ["", "extensions", "apps"]
+  resources: ["deployments", "replicasets", "pods"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"] 
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: cluster-deployment-manager-binding
+  #namespace: default
+subjects:
+- kind: User
+  name: user1
+  apiGroup: ""
+roleRef:
+  kind: ClusterRole
+  name: deployment-manager
+  apiGroup: ""
